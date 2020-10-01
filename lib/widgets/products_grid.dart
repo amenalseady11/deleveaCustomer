@@ -16,6 +16,7 @@ class ProductsGrid extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             itemCount: products.length,
             scrollDirection: Axis.vertical,
+            physics: NeverScrollableScrollPhysics(),
             itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
               // builder: (c) => products[i],
               value: products[i],

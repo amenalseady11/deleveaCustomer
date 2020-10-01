@@ -2,6 +2,9 @@ import 'package:app/providers/ShopModel.dart';
 import 'package:app/screens/cart_screen.dart';
 import 'package:app/screens/themes/light_color.dart';
 import 'package:app/screens/themes/theme.dart';
+import 'package:app/utils/constants.dart';
+import 'package:app/utils/size_config.dart';
+import 'package:app/widgets/default_button.dart';
 import 'package:app/widgets/extentions.dart';
 import 'package:app/widgets/icon_widget.dart';
 import 'package:app/widgets/products_grid.dart';
@@ -22,6 +25,10 @@ class _ProductDetailPageState extends State<ProductDetailPage>
     with TickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
+  final _pinCodeController = TextEditingController();
+  String pinCode;
+  var _isLoading = false;
+  var _isAvailable = false;
 
   @override
   void initState() {
@@ -97,52 +104,25 @@ class _ProductDetailPageState extends State<ProductDetailPage>
     );
   }
 
-  Widget _categoryWidget() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 0),
-      width: AppTheme.fullWidth(context),
-      height: 80,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        /*  children:
-              AppData.showThumbnailList.map((x) => _thumbnail(x)).toList()*/
-      ),
-    );
-  }
-
-  Widget _thumbnail(String image) {
-    return AnimatedBuilder(
-      animation: animation,
-      //  builder: null,
-      builder: (context, child) => AnimatedOpacity(
-        opacity: animation.value,
-        duration: Duration(milliseconds: 500),
-        child: child,
-      ),
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        child: Container(
-          height: 40,
-          width: 50,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: LightColor.grey,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(13)),
-            // color: Theme.of(context).backgroundColor,
-          ),
-          child: Image.asset(image),
-        ).ripple(() {}, borderRadius: BorderRadius.all(Radius.circular(13))),
-      ),
-    );
+  void checkAvailability(String pinCode) {
+    var zipCodes = widget.shop.zipcodes.split(",");
+    for (var i in zipCodes) {
+      if (i.trim() == pinCode) {
+        _isAvailable = true;
+        break;
+      } else
+        _isAvailable = false;
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Widget _detailWidget() {
     return DraggableScrollableSheet(
-      maxChildSize: .8,
-      initialChildSize: .53,
-      minChildSize: .53,
+      maxChildSize: 1,
+      initialChildSize: .5,
+      minChildSize: .5,
       builder: (context, scrollController) {
         return Container(
           padding: AppTheme.padding.copyWith(bottom: 0),
@@ -181,20 +161,6 @@ class _ProductDetailPageState extends State<ProductDetailPage>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              TitleText(
-                                text: "₹ ",
-                                fontSize: 18,
-                                color: LightColor.red,
-                              ),
-                              TitleText(
-                                text: "500",
-                                fontSize: 25,
-                              ),
-                            ],
-                          ),
                           Row(
                             children: <Widget>[
                               Icon(Icons.star,
@@ -235,81 +201,54 @@ class _ProductDetailPageState extends State<ProductDetailPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         TitleText(
-          text: "Available items",
+          text: _isAvailable ? "Item Available" : "Item is not available",
           fontSize: 14,
+          color: _isAvailable ? Colors.green : Colors.red,
+        ),
+        Row(
+          children: [
+            Container(
+                width: 120,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Enter PinCode'),
+                  controller: _pinCodeController,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'PinCode is empty!';
+                    }
+                    return null;
+                  },
+                  onChanged: (newValue) => pinCode = newValue,
+                  onSaved: (value) {
+                    pinCode = value;
+                  },
+                )),
+            SizedBox(
+              width: 20,
+            ),
+            _isLoading
+                ? CircularProgressIndicator()
+                : FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    color: kPrimaryColor,
+                    onPressed: () {
+                      checkAvailability(pinCode);
+                    },
+                    child: Text(
+                      "Check",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+          ],
         ),
         SizedBox(height: 20),
         ProductsGrid()
       ],
-    );
-  }
-
-  Widget _sizeWidget(String text,
-      {Color color = LightColor.iconColor, bool isSelected = false}) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(
-            color: LightColor.iconColor,
-            style: !isSelected ? BorderStyle.solid : BorderStyle.none),
-        borderRadius: BorderRadius.all(Radius.circular(13)),
-        color:
-            isSelected ? LightColor.orange : Theme.of(context).backgroundColor,
-      ),
-      child: TitleText(
-        text: text,
-        fontSize: 16,
-        color: isSelected ? LightColor.background : LightColor.titleTextColor,
-      ),
-    ).ripple(() {}, borderRadius: BorderRadius.all(Radius.circular(13)));
-  }
-
-  Widget _availableColor() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        TitleText(
-          text: "",
-          fontSize: 14,
-        ),
-        SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _colorWidget(LightColor.yellowColor, isSelected: true),
-            SizedBox(
-              width: 30,
-            ),
-            _colorWidget(LightColor.lightBlue),
-            SizedBox(
-              width: 30,
-            ),
-            _colorWidget(LightColor.black),
-            SizedBox(
-              width: 30,
-            ),
-            _colorWidget(LightColor.red),
-            SizedBox(
-              width: 30,
-            ),
-            _colorWidget(LightColor.skyBlue),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _colorWidget(Color color, {bool isSelected = false}) {
-    return CircleAvatar(
-      radius: 12,
-      backgroundColor: color.withAlpha(150),
-      child: isSelected
-          ? Icon(
-              Icons.check_circle,
-              color: color,
-              size: 18,
-            )
-          : CircleAvatar(radius: 7, backgroundColor: color),
     );
   }
 
@@ -358,7 +297,6 @@ class _ProductDetailPageState extends State<ProductDetailPage>
                 children: <Widget>[
                   _appBar(),
                   _productImage(),
-                  _categoryWidget(),
                 ],
               ),
               _detailWidget()

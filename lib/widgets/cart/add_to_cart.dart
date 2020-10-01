@@ -87,6 +87,10 @@ class _AddToCartContainerState extends State<AddToCartContainer> {
                   productId: widget._productModel.id,
                   merchantId: widget._productModel.merchant,
                   quantity: _quantity);
+              _quantity++;
+              setState(() {
+
+              });
               Scaffold.of(context).hideCurrentSnackBar();
               Scaffold.of(context).showSnackBar(
                 SnackBar(

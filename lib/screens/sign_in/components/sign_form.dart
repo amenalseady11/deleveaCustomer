@@ -27,10 +27,7 @@ class _SignFormState extends State<SignForm> {
 
   @override
   void dispose() {
-    FocusScope.of(context).unfocus();
-
     super.dispose();
-
   }
   @override
   Widget build(BuildContext context) {

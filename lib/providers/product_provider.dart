@@ -16,6 +16,7 @@ class ProductProvider with ChangeNotifier {
   ProductProvider(this.authToken, this.userId, this._items);
 
   Future<void> fetchProducts(String shopId) async {
+    _items.clear();
     var url = 'https://delevea.pythonanywhere.com/api/products/shop=$shopId';
     try {
       final response = await http.get(url, headers: {

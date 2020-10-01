@@ -10,12 +10,9 @@ import '../providers/cart.dart';
 import 'cart/add_to_cart.dart';
 
 class ProductItem extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-
     final product = Provider.of<ProductModel>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
     return Container(
@@ -55,12 +52,6 @@ class ProductItem extends StatelessWidget {
                     Icon(Icons.star_border, size: 17),
                   ],
                 )
-                /*    Flexible(
-                  child: Text(
-                    product.description,
-                    style: TextStyle(color: LightColor.black, fontSize: 13),
-                  ),
-                )*/
               ],
             ),
           ),

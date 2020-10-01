@@ -122,7 +122,8 @@ class Cart with ChangeNotifier {
             'quantity': quantity,
             'merchant': merchantId,
           }));
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final extractedData = json.decode(response.
+      body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
@@ -208,7 +209,7 @@ class Cart with ChangeNotifier {
 
   Future<void> removeItem(int productId) async {
     final url =
-        'http://delevea.pythonanywhere.com/api/order-item-update/id=$productId/';
+        'https://delevea.pythonanywhere.com/api/order-item-delete/id=$productId/';
     final response = await http.delete(
       url,
       headers: {
@@ -217,11 +218,13 @@ class Cart with ChangeNotifier {
         'Authorization': 'Token $authToken',
       },
     );
+    print(url);
     try {
       final data = json.decode(response.body) as Map<String, dynamic>;
+      cartItems.removeWhere((element) => element.id == productId);
+
     } catch (e) {}
     // ignore: unrelated_type_equality_checks
-    cartItems.removeWhere((element) => element.id == productId);
     notifyListeners();
   }
 

@@ -1,6 +1,6 @@
 import 'package:app/providers/ShopModel.dart';
 import 'package:app/providers/product_provider.dart';
-import 'package:app/screens/product_detail.dart';
+import 'package:app/screens/productdetail/product_detail.dart';
 import 'package:app/screens/themes/light_color.dart';
 import 'package:app/widgets/extentions.dart';
 import 'package:app/widgets/title_text.dart';

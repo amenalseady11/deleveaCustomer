@@ -2,7 +2,7 @@ import 'package:app/providers/product_provider.dart';
 import 'package:app/screens/dashboard/mainPage.dart';
 import 'package:app/screens/forgot_password/forgot_password_screen.dart';
 import 'package:app/screens/orders_list/orders_list_screen.dart';
-import 'package:app/screens/product_detail.dart';
+import 'package:app/screens/productdetail/product_detail.dart';
 import 'package:app/screens/profile/profile_screen.dart';
 import 'package:app/screens/sign_in/login_success_screen.dart';
 import 'package:app/screens/sign_in/sign_in_screen.dart';
