@@ -73,7 +73,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   SizedBox(height: kSpacingUnit.w * 2),
                   Text(
-                    authData.userData.name,
+                    authData.userData.name==null?'Username':authData.userData.name,
                     style: kTitleTextStyle,
                   ),
                   SizedBox(height: kSpacingUnit.w * 0.5),

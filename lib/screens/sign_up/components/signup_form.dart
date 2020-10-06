@@ -17,7 +17,6 @@ class SignUpForm extends StatefulWidget {
 
 class _SignFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String email;
   String mobile;
@@ -34,7 +33,7 @@ class _SignFormState extends State<SignUpForm> {
     try {
       // Log user in
       await Provider.of<Auth>(context, listen: false)
-          .signupUser(userName, password, email)
+          .signupUser(userName, password, email,mobile)
           .then((value) => {
                 if (value) {_showDialog('Signup success', true)}
               });
@@ -111,6 +110,8 @@ class _SignFormState extends State<SignUpForm> {
       ),
     );
   }
+
+
 
   TextFormField buildPasswordFormField() {
     return TextFormField(
@@ -226,7 +227,7 @@ class _SignFormState extends State<SignUpForm> {
           setState(() {
             errors.add(kInvalidEmailError);
           });
-          return "";
+          return kInvalidEmailError;
         }
         return null;
       },

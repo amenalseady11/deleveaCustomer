@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:app/providers/ShopModel.dart';
 import 'package:app/providers/category.dart';
+import 'package:app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './product.dart';
 import '../models/http_exception.dart';
@@ -17,6 +19,9 @@ class ProductCategory with ChangeNotifier {
 
   final String authToken;
   final String userId;
+  String _pincode;
+
+  String get pincode => _pincode;
 
   ProductCategory(this.authToken, this.userId, this._items);
 
@@ -36,7 +41,6 @@ class ProductCategory with ChangeNotifier {
   }
 */
 
-
   Future<void> fetchCategories() async {
     var url = 'http://delevea.pythonanywhere.com/api/shop-category/all/';
     try {
@@ -45,7 +49,7 @@ class ProductCategory with ChangeNotifier {
         'Accept': 'application/json',
         'Authorization': 'Token $authToken',
       });
-      if(response.statusCode ==200) {
+      if (response.statusCode == 200) {
         final extractedData = json.decode(response.body) as List<dynamic>;
         if (extractedData == null) {
           return;
@@ -64,7 +68,7 @@ class ProductCategory with ChangeNotifier {
   }
 
   Future<void> searchShops(String keyword) async {
-    var url = 'https://delevea.pythonanywhere.com/api/products/search=' +
+    var url = 'https://delevea~.pythonanywhere.com/api/products/search=' +
         keyword +
         '/';
 
@@ -112,6 +116,59 @@ class ProductCategory with ChangeNotifier {
       _shopList = categories;
       print(extractedData);
       notifyListeners();
+    } catch (error) {
+      throw (error);
+    }
+  }
+
+  Future<void> updateZipCode(String zipcode) async {
+    var url = 'https://delevea.pythonanywhere.com/api/customer/zipcode-update/';
+    print(url);
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Token $authToken',
+        },
+        body: json.encode({
+          'zipcode': zipcode
+        }),
+      );
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null || extractedData['zipcode'] == null) {
+        return false;
+      }
+      _pincode = pincode;
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(ZIP_CODE, extractedData['zipcode']);
+      print(extractedData);
+      notifyListeners();
+    } catch (error) {
+      throw (error);
+    }
+  }
+
+  Future<bool> fetchZipCode() async {
+    var url = 'http://delevea.pythonanywhere.com/api/customer/zipcode/';
+    print(url);
+    try {
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Token $authToken',
+      });
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null || extractedData['zipcode'] == null) {
+        return false;
+      }
+      final prefs = await SharedPreferences.getInstance();
+      _pincode = extractedData['zipcode'];
+
+      prefs.setString(ZIP_CODE, _pincode);
+      print(extractedData);
+      return true;
     } catch (error) {
       throw (error);
     }

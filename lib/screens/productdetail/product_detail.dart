@@ -1,16 +1,15 @@
 import 'package:app/providers/ShopModel.dart';
+import 'package:app/providers/category_provider.dart';
 import 'package:app/screens/cart_screen.dart';
 import 'package:app/screens/themes/light_color.dart';
 import 'package:app/screens/themes/theme.dart';
 import 'package:app/utils/constants.dart';
-import 'package:app/utils/size_config.dart';
-import 'package:app/widgets/default_button.dart';
-import 'package:app/widgets/extentions.dart';
 import 'package:app/widgets/icon_widget.dart';
 import 'package:app/widgets/products_grid.dart';
 import 'package:app/widgets/title_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailPage extends StatefulWidget {
   ProductDetailPage({Key key, this.shop}) : super(key: key);
@@ -25,6 +24,7 @@ class _ProductDetailPageState extends State<ProductDetailPage>
     with TickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
+  String initialPincode = "";
   final _pinCodeController = TextEditingController();
   String pinCode;
   var _isLoading = false;
@@ -33,6 +33,10 @@ class _ProductDetailPageState extends State<ProductDetailPage>
   @override
   void initState() {
     super.initState();
+    pinCode = Provider.of<ProductCategory>(context, listen: false).pincode;
+    _pinCodeController.text = pinCode;
+    checkAvailability(pinCode);
+
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     animation = Tween<double>(begin: 0, end: 1).animate(

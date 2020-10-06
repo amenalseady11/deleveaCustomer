@@ -1,11 +1,18 @@
+import 'dart:ui';
+
 import 'package:app/providers/category_provider.dart';
 import 'package:app/screens/dashboard/shop_list_widget.dart';
 import 'package:app/screens/sign_in/sign_in_screen.dart';
 import 'package:app/screens/themes/theme.dart';
+import 'package:app/utils/constants.dart';
+import 'package:app/utils/size_config.dart';
 import 'package:app/widgets/carousel_widget.dart';
+import 'package:app/widgets/default_button.dart';
+import 'package:app/widgets/form_error.dart';
 import 'package:app/widgets/product_icon.dart';
 import 'package:app/widgets/shimmer_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,11 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
   var _isInit = true;
   var _isLoading = false;
   int catId = 1;
+  var pinCode = "";
+  final List<String> errors = [];
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      print('home');
+      SizeConfig().init(context);
       setState(() {
         _isLoading = true;
       });
@@ -34,21 +44,69 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<ProductCategory>(context, listen: false)
             .fetchCategories()
             .then((_) {
-          _isInit = false;
-
           setState(() {
             _isLoading = false;
           });
         });
         Provider.of<ProductCategory>(context, listen: false)
+            .fetchZipCode()
+            .then((value) => {if (!value) _showModal()});
+        Provider.of<ProductCategory>(context, listen: false)
             .fetchCategoryShops(1)
             .then((_) {});
-        _isInit = false;
       } catch (error) {
         Navigator.of(context).pushReplacementNamed(SignInScreen.routeName);
       }
     }
     super.didChangeDependencies();
+  }
+
+  TextFormField buildPincodeField() {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      onSaved: (newValue) => pinCode = newValue,
+      onChanged: (value) {
+        if (value.isNotEmpty && errors.contains(kPinCodeNullError)) {
+          setState(() {
+            errors.remove(kPinCodeNullError);
+          });
+        } else if (value.length != 6 && errors.contains(kPinCodeInvalidError)) {
+          setState(() {
+            errors.remove(kPinCodeInvalidError);
+          });
+          return "";
+        }
+        return null;
+      },
+      validator: (value) {
+        if (value.isEmpty && !errors.contains(kPinCodeNullError)) {
+          setState(() {
+            errors.add(kPinCodeNullError);
+          });
+          return "";
+        } else if (value.length != 6 &&
+            !errors.contains(kPinCodeInvalidError)) {
+          setState(() {
+            errors.add(kPinCodeInvalidError);
+          });
+          return "";
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: "Pincode",
+        hintText: "Enter your Pincode",
+        // If  you are using latest version of flutter then lable text and hint text shown like this
+        // if you r using flutter less then 1.20.* then maybe this is not working properly
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon: Container(child: Icon(FontAwesomeIcons.city)),
+      ),
+    );
+  }
+
+  void updateZipcode() async {
+    await Provider.of<ProductCategory>(context, listen: false)
+        .updateZipCode(pinCode);
   }
 
   void showCategoryProducts(int catId) async {
@@ -60,6 +118,54 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
       });
     });
+  }
+
+  void _showModal() {
+    showModalBottomSheet(
+        isDismissible: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        backgroundColor: Colors.white,
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                      ),
+                      buildPincodeField(),
+                      errors.length > 0
+                          ? FormError(errors: errors)
+                          : SizedBox(
+                              height: 1,
+                            ),
+                      SizedBox(height: 20),
+                      DefaultButton(
+                        text: "Submit",
+                        press: () {
+                          if (_formKey.currentState.validate()) {
+                            _formKey.currentState.save();
+                            updateZipcode();
+                            Navigator.of(context).pop();
+                            // if all are valid then go to success screen
+                            //
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ));
   }
 
   Widget _categoryWidget() {

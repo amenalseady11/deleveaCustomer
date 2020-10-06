@@ -66,17 +66,17 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(20)),
           _isLoading
               ? CircularProgressIndicator()
-              : DefaultButton(
-                  text: "Continue",
-                  press: () {
-                    if (_formKey.currentState.validate()) {
-                      _formKey.currentState.save();
-                      _submit();
-                      // if all are valid then go to success screen
-                      //
-                    }
-                  },
-                ),
+                : DefaultButton(
+                    text: "Continue",
+                    press: () {
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        _submit();
+                        // if all are valid then go to success screen
+                        //
+                      }
+                    },
+                  ),
         ],
       ),
     );

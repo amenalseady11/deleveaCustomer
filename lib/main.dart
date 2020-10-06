@@ -10,7 +10,6 @@ import 'package:app/screens/sign_up/sign_up_screen.dart';
 import 'package:app/screens/splash/splash_screen_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:google_map_location_picker/generated/l10n.dart'
     as location_picker;
 import 'package:google_map_location_picker/generated/l10n.dart';
@@ -24,7 +23,7 @@ import './screens/cart_screen.dart';
 import './screens/splash_screen.dart';
 
 void main() {
-  Stetho.initialize();
+  //Stetho.initialize();
   runApp(MyApp());
 }
 

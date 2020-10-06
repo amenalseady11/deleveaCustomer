@@ -17,6 +17,7 @@ class Auth with ChangeNotifier {
   UserData _userData;
 
   UserData get userData => _userData;
+
   bool get isAuth {
     return token != null;
   }
@@ -30,7 +31,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> signupUser(
-      String userName, String password, String email) async {
+      String userName, String password, String email, String mobile) async {
     final url = 'http://delevea.pythonanywhere.com/auth/users/';
     print(url);
     try {
@@ -45,6 +46,7 @@ class Auth with ChangeNotifier {
             'username': userName,
             'email': email,
             'password': password,
+            'phone': mobile,
             're_password': password,
           },
         ),
@@ -53,13 +55,15 @@ class Auth with ChangeNotifier {
 
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (responseData['id'] == null) {
-        if(responseData['password']!=null)
-        throw HttpException('password',101);
-        else if(responseData['username']!=null)
-          throw HttpException('username',102);
-        else if(responseData['email']!=null)
-          throw HttpException('email',103);
+        if (responseData['password'] != null)
+          throw HttpException('password', 101);
+        else if (responseData['username'] != null)
+          throw HttpException('username', 102);
+        else if (responseData['email'] != null)
+          throw HttpException('email', 103);
       }
+      customerCreate(userName, responseData['id'], email);
+
       notifyListeners();
       return true;
     } catch (error) {
@@ -67,8 +71,39 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<bool> _authenticate(
-      String userName, String password) async {
+  Future<bool> customerCreate(
+      String userName, int userId, String email) async {
+    final url = 'https://delevea.pythonanywhere.com/api/customer-create/';
+    print(url);
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Basic ' + base64Encode(utf8.encode('admin:1234')),
+        },
+        body: json.encode(
+          {
+            'username': userName,
+            'name': userName,
+            'email': email,
+            'user': userId,
+          },
+        ),
+      );
+      print(json.decode(response.body));
+
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      notifyListeners();
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<bool> _authenticate(String userName, String password) async {
     final url = 'http://delevea.pythonanywhere.com/auth/token/login/';
     print(url);
     try {
@@ -89,7 +124,7 @@ class Auth with ChangeNotifier {
 
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (responseData['auth_token'] == null) {
-        throw HttpException("Authentication Failed",100);
+        throw HttpException("Authentication Failed", 100);
       }
       _token = responseData['auth_token'];
       notifyListeners();
@@ -114,9 +149,9 @@ class Auth with ChangeNotifier {
       );
       print(json.decode(response.body));
 
-      final responseData =   UserData.fromJson(json.decode(response.body));
+      final responseData = UserData.fromJson(json.decode(response.body));
       if (responseData.id == null) {
-        throw HttpException("Authentication Failed",100);
+        throw HttpException("Authentication Failed", 100);
       }
       _userData = responseData;
       _userId = _userData.id.toString();
@@ -133,7 +168,6 @@ class Auth with ChangeNotifier {
       throw error;
     }
   }
-
 
   Future<bool> login(String email, String password) async {
     return _authenticate(email, password);

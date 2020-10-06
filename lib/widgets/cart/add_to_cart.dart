@@ -1,8 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:app/utils/constants.dart';
 import 'package:app/providers/cart.dart';
 import 'package:app/providers/product_model.dart';
 import 'package:app/screens/themes/light_color.dart';
+import 'package:app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class AddToCartContainer extends StatefulWidget {
@@ -16,7 +16,7 @@ class AddToCartContainer extends StatefulWidget {
 }
 
 class _AddToCartContainerState extends State<AddToCartContainer> {
-  int _quantity = 1;
+  int _quantity = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +51,11 @@ class _AddToCartContainerState extends State<AddToCartContainer> {
                           color: LightColor.yellowColor,
                         ),
                         onPressed: () {
-                          setState(() {
-                            if (_quantity > 0) _quantity--;
-                          });
+                          if (_quantity > 0) {
+                            _quantity--;
+                            addToCart();
+                            setState(() {});
+                          }
                         },
                         color: Theme.of(context).accentColor,
                       ),
@@ -69,9 +71,9 @@ class _AddToCartContainerState extends State<AddToCartContainer> {
                           color: LightColor.yellowColor,
                         ),
                         onPressed: () {
-                          setState(() {
-                            _quantity++;
-                          });
+                          _quantity++;
+                          addToCart();
+                          setState(() {});
                         },
                         color: Theme.of(context).accentColor,
                       ),
@@ -83,29 +85,14 @@ class _AddToCartContainerState extends State<AddToCartContainer> {
           ),
           ScaleAnimatedTextKit(
             onTap: () {
-              widget._cart.fetchIncompleteOrderId(
+              /*       widget._cart.fetchIncompleteOrderId(
                   productId: widget._productModel.id,
                   merchantId: widget._productModel.merchant,
                   quantity: _quantity);
               _quantity++;
               setState(() {
 
-              });
-              Scaffold.of(context).hideCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Added item to cart!',
-                  ),
-                  duration: Duration(seconds: 2),
-                  action: SnackBarAction(
-                    label: 'UNDO',
-                    onPressed: () {
-                      widget._cart.removeSingleItem(widget._productModel.id);
-                    },
-                  ),
-                ),
-              );
+              });*/
             },
             repeatForever: true,
             textAlign: TextAlign.center,
@@ -118,5 +105,30 @@ class _AddToCartContainerState extends State<AddToCartContainer> {
         ],
       ),
     );
+  }
+
+  void addToCart() async {
+    await widget._cart
+        .fetchIncompleteOrderId(
+            productId: widget._productModel.id,
+            merchantId: widget._productModel.merchant,
+            quantity: _quantity)
+        .then((value) {
+      Scaffold.of(context).hideCurrentSnackBar();
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Added item to cart!',
+          ),
+          duration: Duration(seconds: 2),
+          action: SnackBarAction(
+            label: 'UNDO',
+            onPressed: () {
+              widget._cart.removeSingleItem(widget._productModel.id);
+            },
+          ),
+        ),
+      );
+    });
   }
 }
