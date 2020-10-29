@@ -1,4 +1,4 @@
-import 'package:app/screens/dashboard/mainPage.dart';
+import 'package:app/screens/dashboard/home_pager.dart';
 import 'package:app/widgets/default_button.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +36,7 @@ class LoginSuccessScreen extends StatelessWidget {
                 text: "Back to home",
                 press: () {
                   Navigator.of(context)
-                      .pushReplacementNamed(MainPage.routeName);
+                      .pushReplacementNamed(HomePager.routeName);
                 },
               ),
             ),

@@ -1,14 +1,16 @@
 import 'package:app/providers/category_provider.dart';
+import 'package:app/providers/product_provider.dart';
+import 'package:app/screens/productdetail/product_detail.dart';
 import 'package:app/screens/themes/theme.dart';
-import 'package:app/widgets/product_card.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:app/widgets/shop_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ShopList extends StatelessWidget {
   final bool isSearch;
+  final Function handler;
 
-  ShopList(this.isSearch);
+  ShopList({this.handler, this.isSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -16,25 +18,32 @@ class ShopList extends StatelessWidget {
     final shops = isSearch ? catData.searchShopList : catData.shopsList;
     return shops.length > 0
         ? Container(
-
             width: AppTheme.fullWidth(context),
-            height: AppTheme.fullHeight(context),
-            child: GridView(
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 2 / 3,
-                  mainAxisSpacing: .5,
-                  crossAxisSpacing: 10),
-              scrollDirection: Axis.vertical,
-              children: shops
-                  .map(
-                    (product) => ProductCard(
-                      product: product,
+            height: AppTheme.fullHeight(context) * .4,
+            child: ListView.builder(
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: shops.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailPage(
+                              shop: shops[index],
+                            ),
+                          ));
+                      await Provider.of<ProductProvider>(context, listen: false)
+                          .fetchProducts(shops[index].id.toString())
+                          .then((_) {});
+                    },
+                    child: ShopCardWidget(
+                      handler: handler,
+                      shopModel: shops[index],
                     ),
-                  )
-                  .toList(),
-            ),
+                  );
+                }),
           )
         : Center(
             child: Container(

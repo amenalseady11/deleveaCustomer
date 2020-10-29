@@ -3,6 +3,7 @@ import 'package:app/screens/themes/light_color.dart';
 import 'package:app/screens/themes/theme.dart';
 import 'package:app/widgets/extentions.dart';
 import 'package:app/widgets/title_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProductIcon extends StatelessWidget {
@@ -18,51 +19,47 @@ class ProductIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return model.id == null
         ? Container(width: 5)
-        : Container(
-            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            child: Container(
-              padding: AppTheme.hPadding,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: model.isSelected
-                    ? LightColor.background
-                    : Colors.transparent,
-                border: Border.all(
-                  color:
-                      model.isSelected ? LightColor.orange : LightColor.grey,
-                  width: model.isSelected ? 2 : 1,
-                ),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                    color:
-                        model.isSelected ? Color(0xfffbf2ef) : Colors.white,
-                    blurRadius: 10,
-                    spreadRadius: 5,
-                    offset: Offset(5, 5),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: <Widget>[
-                  //  model.image != null ? Image.asset(model.image) : SizedBox(),
-                  model.title == null
-                      ? Container()
-                      : Container(
-                          child: TitleText(
-                            text: model.title,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                          ),
-                        )
-                ],
-              ),
-            ).ripple(
-              () {
-                handler(model.id);
-                onSelected(model);
+        : InkWell(
+            splashColor: Theme.of(context).accentColor.withOpacity(0.08),
+            highlightColor: Colors.transparent,
+            onTap: () {
+              handler(model.id);
+              onSelected(model);
               },
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Hero(
+                  tag: model.id,
+                  child: CachedNetworkImage(
+                    imageUrl: model.image,
+                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                        CircularProgressIndicator(value: downloadProgress.progress),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    imageBuilder: (ctx, imageProvider) => Container(
+                      margin: EdgeInsets.only(left: 20, right: 20),
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: imageProvider,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Container(
+                  margin: EdgeInsets.only(left: 20, right: 20),
+                  child: Text(
+                    model.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ],
             ),
           );
   }

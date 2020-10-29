@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:app/providers/cart.dart';
 import 'package:app/providers/product_model.dart';
 import 'package:app/screens/themes/light_color.dart';
@@ -83,25 +82,8 @@ class _AddToCartContainerState extends State<AddToCartContainer> {
               ),
             ),
           ),
-          ScaleAnimatedTextKit(
-            onTap: () {
-              /*       widget._cart.fetchIncompleteOrderId(
-                  productId: widget._productModel.id,
-                  merchantId: widget._productModel.merchant,
-                  quantity: _quantity);
-              _quantity++;
-              setState(() {
+          Text('ADD TO CART')
 
-              });*/
-            },
-            repeatForever: true,
-            textAlign: TextAlign.center,
-            text: ['ADD TO CART'],
-            textStyle: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          )
         ],
       ),
     );

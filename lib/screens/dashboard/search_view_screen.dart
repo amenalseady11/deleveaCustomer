@@ -32,7 +32,7 @@ class _SearchViewState extends State<SearchView> {
                 child: LoadingListPage(),
                 height: 300,
               )
-            : ShopList(true)
+            : ShopList(isSearch: true,)
       ],
     );
   }

@@ -20,11 +20,10 @@ class ProductCard extends StatelessWidget {
         color: LightColor.background,
         borderRadius: BorderRadius.all(Radius.circular(20)),
         boxShadow: <BoxShadow>[
-          BoxShadow(color: Color(0xfff8f8f8), blurRadius: 15, spreadRadius: 10),
+          BoxShadow(color: Colors.white24, blurRadius: 15, spreadRadius: 10),
         ],
       ),
-     // margin: EdgeInsets.symmetric(vertical: !product.isSelected ? 20 : 0),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -44,7 +43,6 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              SizedBox(height: product.isSelected ? 15 : 0),
               CircleAvatar(
                 backgroundImage: NetworkImage(product.image),
                 radius: 60,
@@ -53,13 +51,13 @@ class ProductCard extends StatelessWidget {
               Center(
                 child: TitleText(
                   text: product.name,
-                  fontSize: product.isSelected ? 16 : 14,
+                  fontSize: product.isSelected ? 18 : 16,
                 ),
               ),
-              TitleText(
+            /*  TitleText(
                 text: "Min Rs.200",
                 fontSize: product.isSelected ? 18 : 16,
-              ),
+              ),*/
             ],
           ),
           // SizedBox(height: 5),

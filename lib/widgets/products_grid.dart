@@ -11,16 +11,25 @@ class ProductsGrid extends StatelessWidget {
     final productsData = Provider.of<ProductProvider>(context);
     final products = productsData.items;
     return products.length > 0
-        ? ListView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(10.0),
-            itemCount: products.length,
-            scrollDirection: Axis.vertical,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-              // builder: (c) => products[i],
-              value: products[i],
-              child: ProductItem(),
+        ? Container(
+            height: 210,
+            child: ListView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(10.0),
+              itemCount: products.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (ctx, index) {
+                double _marginLeft = 0;
+                (index == 0) ? _marginLeft = 20 : _marginLeft = 0;
+                return ChangeNotifierProvider.value(
+                  // builder: (c) => products[i],
+                  value: products[index],
+                  child: ProductItem(
+                    heroTag: 'shop_menu',
+                    marginLeft: _marginLeft,
+                  ),
+                );
+              },
             ),
           )
         : Container(

@@ -4,6 +4,7 @@ import 'package:app/screens/profile/profile_list_item.dart';
 import 'package:app/screens/sign_in/sign_in_screen.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/widgets/app_bar_common.dart';
+import 'package:app/widgets/profile_avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -46,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                       children: <Widget>[
                         CircleAvatar(
                           radius: kSpacingUnit.w * 5,
-                          backgroundImage: AssetImage('assets/images/user.png'),
+                          backgroundImage: AssetImage('assets/images/user.jpg'),
                         ),
                         Align(
                           alignment: Alignment.bottomRight,
@@ -77,7 +78,7 @@ class ProfileScreen extends StatelessWidget {
                     style: kTitleTextStyle,
                   ),
                   SizedBox(height: kSpacingUnit.w * 0.5),
-                  Padding(
+       /*           Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -104,7 +105,7 @@ class ProfileScreen extends StatelessWidget {
                                 : authData.userData.city),
                       ],
                     ),
-                  )
+                  )*/
                 ],
               );
             });
@@ -113,69 +114,45 @@ class ProfileScreen extends StatelessWidget {
       },
     );
 
-    return Builder(
-      builder: (context) {
-        return Scaffold(
-          body: Column(
-            children: <Widget>[
-              SizedBox(height: kSpacingUnit.w * 5),
-              AppBarCommon('My Profile'),
-              profileInfo,
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    ProfileListItem(
-                      icon: LineAwesomeIcons.user_shield,
-                      text: 'Privacy',
-                    ),
-                    GestureDetector(
-                      onTap: () =>
-                          Navigator.of(context).pushNamed(OrdersList.routeName),
-                      child: ProfileListItem(
-                        icon: LineAwesomeIcons.alternate_first_order,
-                        text: 'Order History',
-                      ),
-                    ),
-                    ProfileListItem(
-                      icon: LineAwesomeIcons.cog,
-                      text: 'Settings',
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushReplacementNamed(SignInScreen.routeName);
-                        Provider.of<Auth>(context, listen: false).logout();
-                      },
-                      child: ProfileListItem(
-                        icon: LineAwesomeIcons.alternate_sign_out,
-                        text: 'Logout',
-                        hasNavigation: true,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+      child: Column(
+        children: <Widget>[
+          ProfileAvatarWidget(),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            leading: Icon(
+              Icons.person,
+              color: Theme.of(context).hintColor,
+            ),
+            title: Text(
+              'About',
+              style: Theme.of(context).textTheme.display1,
+            ),
           ),
-        );
-      },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical professor Read More',
+              style: Theme.of(context).textTheme.body1,
+            ),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            leading: Icon(
+              Icons.shopping_basket,
+              color: Theme.of(context).hintColor,
+            ),
+            title: Text(
+              'Recent Orders',
+              style: Theme.of(context).textTheme.display1,
+            ),
+          ),
+
+        ],
+      ),
     );
   }
 
-  Row _userDataFields(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: kCaptionTextStyle,
-        ),
-        Text(
-          value,
-          style: kCaptionTextStyle,
-        ),
-      ],
-    );
-  }
+
 }

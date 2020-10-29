@@ -1,14 +1,14 @@
 import 'package:app/models/http_exception.dart';
 import 'package:app/providers/auth.dart';
-import 'package:app/screens/dashboard/mainPage.dart';
+import 'package:app/screens/dashboard/home_pager.dart';
 import 'package:app/screens/forgot_password/forgot_password_screen.dart';
+import 'package:app/utils/constants.dart';
 import 'package:app/widgets/custom_surfix_icon.dart';
 import 'package:app/widgets/default_button.dart';
 import 'package:app/widgets/form_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:app/utils/constants.dart';
 import '../../../utils/size_config.dart';
 
 class SignForm extends StatefulWidget {
@@ -24,11 +24,11 @@ class _SignFormState extends State<SignForm> {
   final List<String> errors = [];
   var _isLoading = false;
 
-
   @override
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -66,17 +66,17 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(20)),
           _isLoading
               ? CircularProgressIndicator()
-                : DefaultButton(
-                    text: "Continue",
-                    press: () {
-                      if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
-                        _submit();
-                        // if all are valid then go to success screen
-                        //
-                      }
-                    },
-                  ),
+              : DefaultButton(
+                  text: "Continue",
+                  press: () {
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+                      _submit();
+                      // if all are valid then go to success screen
+                      //
+                    }
+                  },
+                ),
         ],
       ),
     );
@@ -97,12 +97,12 @@ class _SignFormState extends State<SignForm> {
                 if (value)
                   {
                     Navigator.of(context)
-                        .pushReplacementNamed(MainPage.routeName)
+                        .pushReplacementNamed(HomePager.routeName)
                   }
               });
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
-     if (error.toString().contains('INVALID_PASSWORD')) {
+      if (error.toString().contains('INVALID_PASSWORD')) {
         errorMessage = 'Invalid password.';
       }
       _showErrorDialog(errorMessage);
@@ -112,7 +112,7 @@ class _SignFormState extends State<SignForm> {
       _showErrorDialog(errorMessage);
     }
 
-   setState(() {
+    setState(() {
       _isLoading = false;
     });
   }

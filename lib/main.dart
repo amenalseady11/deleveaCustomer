@@ -1,6 +1,6 @@
 import 'package:app/providers/product_provider.dart';
-import 'package:app/screens/dashboard/mainPage.dart';
 import 'package:app/screens/forgot_password/forgot_password_screen.dart';
+import 'package:app/screens/maps/map_view.dart';
 import 'package:app/screens/orders_list/orders_list_screen.dart';
 import 'package:app/screens/productdetail/product_detail.dart';
 import 'package:app/screens/profile/profile_screen.dart';
@@ -21,6 +21,8 @@ import './providers/category_provider.dart';
 import './providers/orders.dart';
 import './screens/cart_screen.dart';
 import './screens/splash_screen.dart';
+import './utils/app_config.dart' as config;
+import 'screens/dashboard/home_pager.dart';
 
 void main() {
   //Stetho.initialize();
@@ -84,17 +86,57 @@ class MyApp extends StatelessWidget {
           ],
           title: 'MyShop',
           theme: ThemeData(
-            primarySwatch: Colors.green,
-            accentColor: Colors.greenAccent,
-            fontFamily: 'Lato',
+            fontFamily: 'Poppins',
+            primaryColor: Colors.white,
+            brightness: Brightness.light,
+            accentColor: config.Colors().mainColor(1),
+            focusColor: config.Colors().accentColor(1),
+            hintColor: config.Colors().secondColor(1),
+            textTheme: TextTheme(
+              headline6: TextStyle(
+                  fontSize: 20.0, color: config.Colors().secondColor(1)),
+              headline5: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                  color: config.Colors().secondColor(1)),
+              headline4: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w600,
+                  color: config.Colors().secondColor(1)),
+              headline3: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w700,
+                  color: config.Colors().mainColor(1)),
+              headline2: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w300,
+                  color: config.Colors().secondColor(1)),
+              subtitle2: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w500,
+                  color: config.Colors().secondColor(1)),
+              subtitle1: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  color: config.Colors().mainColor(1)),
+              bodyText1: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  color: config.Colors().mainColor(1)),
+              bodyText2: TextStyle(
+                  fontSize: 14.0, color: config.Colors().secondColor(1)),
+              caption: TextStyle(
+                  fontSize: 12.0, color: config.Colors().accentColor(1)),
+            ),
           ),
           home: SplashScreen(),
           routes: {
             SplashScreenIntro.routeName: (ctx) => SplashScreenIntro(),
             ProductDetailPage.routeName: (ctx) => ProductDetailPage(),
             CartScreen.routeName: (ctx) => CartScreen(),
-            MainPage.routeName: (context) => MainPage(),
+            HomePager.routeName: (context) => HomePager(),
             ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
+            ShopMapViewScreen.routeName: (context) => ShopMapViewScreen(),
             SignInScreen.routeName: (context) => SignInScreen(),
             LoginSuccessScreen.routeName: (context) => LoginSuccessScreen(),
             SignUpScreen.routeName: (context) => SignUpScreen(),

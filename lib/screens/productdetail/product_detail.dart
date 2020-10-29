@@ -4,8 +4,8 @@ import 'package:app/screens/cart_screen.dart';
 import 'package:app/screens/themes/light_color.dart';
 import 'package:app/screens/themes/theme.dart';
 import 'package:app/utils/constants.dart';
-import 'package:app/widgets/icon_widget.dart';
 import 'package:app/widgets/products_grid.dart';
+import 'package:app/widgets/shopping_cart_float_button_widget.dart';
 import 'package:app/widgets/title_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +22,6 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage>
     with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
   String initialPincode = "";
   final _pinCodeController = TextEditingController();
   String pinCode;
@@ -36,77 +34,14 @@ class _ProductDetailPageState extends State<ProductDetailPage>
     pinCode = Provider.of<ProductCategory>(context, listen: false).pincode;
     _pinCodeController.text = pinCode;
     checkAvailability(pinCode);
-
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    animation = Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInToLinear));
-    controller.forward();
   }
 
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
   }
 
   bool isLiked = true;
-
-  Widget _appBar() {
-    return Container(
-      padding: AppTheme.padding,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconDisplay(
-            Icons.arrow_back_ios,
-            color: Colors.black54,
-            size: 15,
-            padding: 12,
-            isOutLine: true,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          IconDisplay(isLiked ? Icons.favorite : Icons.favorite_border,
-              color: isLiked ? LightColor.red : LightColor.lightGrey,
-              size: 15,
-              padding: 12,
-              isOutLine: false, onPressed: () {
-            setState(() {
-              isLiked = !isLiked;
-            });
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _productImage() {
-    return AnimatedBuilder(
-      builder: (context, child) {
-        return AnimatedOpacity(
-          duration: Duration(milliseconds: 500),
-          opacity: animation.value,
-          child: child,
-        );
-      },
-      animation: animation,
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          TitleText(
-            text: "DELEVEA",
-            fontSize: 80,
-            color: LightColor.lightGrey,
-          ),
-          CachedNetworkImage(
-            imageUrl: widget.shop.image,
-          )
-        ],
-      ),
-    );
-  }
 
   void checkAvailability(String pinCode) {
     var zipCodes = widget.shop.zipcodes.split(",");
@@ -251,7 +186,6 @@ class _ProductDetailPageState extends State<ProductDetailPage>
           ],
         ),
         SizedBox(height: 20),
-        ProductsGrid()
       ],
     );
   }
@@ -283,30 +217,251 @@ class _ProductDetailPageState extends State<ProductDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //   floatingActionButton: _flotingButton(),
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            colors: [
-              Color(0xfffbfbfb),
-              Color(0xfff7f7f7),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          )),
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  _appBar(),
-                  _productImage(),
-                ],
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/Menu');
+        },
+        isExtended: true,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        icon: Icon(Icons.restaurant),
+        label: Text('Menu'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          CustomScrollView(
+            primary: true,
+            shrinkWrap: false,
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: Theme.of(context).accentColor.withOpacity(0.9),
+                expandedHeight: 300,
+                elevation: 0,
+                iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.parallax,
+                  background: Hero(
+                    tag: widget.shop.id,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.shop.image,
+                      fit: BoxFit.cover,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ),
               ),
-              _detailWidget()
+              SliverToBoxAdapter(
+                child: Wrap(
+//              crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              widget.shop.name,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: Theme.of(context).textTheme.display2,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 45,
+                            height: 45,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {},
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(widget.shop.rate.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .merge(TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor))),
+                                  Icon(
+                                    Icons.star_border,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 18,
+                                  ),
+                                ],
+                              ),
+                              color: Theme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.9),
+                              shape: StadiumBorder(),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          SizedBox(
+                            width: 45,
+                            height: 45,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                Navigator.of(context).pushNamed('/Chat');
+                              },
+                              child: Icon(
+                                Icons.chat,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              color: Theme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.9),
+                              shape: StadiumBorder(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 5),
+                      child: Text(widget.shop.description),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 0),
+                        leading: Icon(
+                          Icons.stars,
+                          color: Theme.of(context).hintColor,
+                        ),
+                        title: Text(
+                          'Information',
+                          style: Theme.of(context).textTheme.display1,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      color: Theme.of(context).primaryColor,
+                      child: Text(
+                        "Product available pincodes - " + widget.shop.zipcodes,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: Theme.of(context).textTheme.body2,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      color: Theme.of(context).primaryColor,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              widget.shop.landmark,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: Theme.of(context).textTheme.body2,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          SizedBox(
+                            width: 42,
+                            height: 42,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {},
+                              child: Icon(
+                                Icons.directions,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              color: Theme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.9),
+                              shape: StadiumBorder(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ListTile(
+                      dense: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      leading: Icon(
+                        Icons.trending_up,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      title: Text(
+                        'Trending This Week',
+                        style: Theme.of(context).textTheme.display1,
+                      ),
+                      subtitle: Text(
+                        'Double click on the food to add it to the cart',
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            .merge(TextStyle(fontSize: 11)),
+                      ),
+                    ),
+                    ProductsGrid(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 0),
+                        leading: Icon(
+                          Icons.recent_actors,
+                          color: Theme.of(context).hintColor,
+                        ),
+                        title: Text(
+                          'What They Say ?',
+                          style: Theme.of(context).textTheme.display1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 0),
+                        leading: Icon(
+                          Icons.restaurant,
+                          color: Theme.of(context).hintColor,
+                        ),
+                        title: Text(
+                          'Featured Foods',
+                          style: Theme.of(context).textTheme.display1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
+          Positioned(
+            top: 32,
+            right: 20,
+            child: ShoppingCartFloatButtonWidget(
+              iconColor: Theme.of(context).primaryColor,
+              labelColor: Theme.of(context).hintColor,
+              labelCount: 1,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -24,15 +24,19 @@ class ProductProvider with ChangeNotifier {
         'Accept': 'application/json',
         'Authorization': 'Token $authToken',
       });
-      final extractedData = json.decode(response.body) as List<dynamic>;
-      if (extractedData == null) {
+
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      print(url);
+      print(extractedData);
+
+      if (extractedData == null || extractedData['responseCode']!=200) {
         return;
       }
       List<ProductModel> categories = [];
-      categories =
-          (extractedData).map((e) => new ProductModel.fromJson(e)).toList();
+      categories = (extractedData['products'] as List)
+          .map((i) => ProductModel.fromJson(i))
+          .toList();
       _items = categories;
-      print(extractedData);
       notifyListeners();
     } catch (error) {
       throw (error);

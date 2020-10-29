@@ -1,9 +1,7 @@
 import 'package:app/providers/orders.dart';
 import 'package:app/screens/orders_list/order_list_item.dart';
 import 'package:app/utils/constants.dart';
-import 'package:app/widgets/app_bar_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class OrdersList extends StatelessWidget {
@@ -11,12 +9,9 @@ class OrdersList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: kSpacingUnit.w * 5),
-          AppBarCommon('Order History'),
           Expanded(
             child: FutureBuilder(
               future: Provider.of<Orders>(context).fetchPastOrders(),
@@ -32,11 +27,18 @@ class OrdersList extends StatelessWidget {
                     );
                   } else {
                     return Consumer<Orders>(builder: (ctx, order, child) {
-                      return ListView.builder(
-                        itemCount: order.pastOrders.length,
-                        itemBuilder: (ctx, i) =>
-                            OrderListItem(order.pastOrders[i]),
-                        scrollDirection: Axis.vertical,
+                      return Column(
+                        children: [
+                          order.pastOrders.length < 1
+                              ? emptyCart()
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: order.pastOrders.length,
+                                  itemBuilder: (ctx, i) =>
+                                      OrderListItem(order.pastOrders[i]),
+                                  scrollDirection: Axis.vertical,
+                                )
+                        ],
                       );
                     });
                   }
@@ -46,6 +48,26 @@ class OrdersList extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget emptyCart() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Container(
+          width: double.infinity,
+          height: 200,
+          child: Image.asset(
+            'assets/images/empty_cart.png',
+            fit: BoxFit.fill,
+          ),
+        ),
+        Text(
+          'Order history is Empty!!',
+          style: TextStyle(color: kPrimaryColor, fontSize: 20),
+        )
+      ],
     );
   }
 }

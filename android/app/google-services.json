@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "515603593417",
+    "firebase_url": "https://delevea-delivery-partner.firebaseio.com",
+    "project_id": "delevea-delivery-partner",
+    "storage_bucket": "delevea-delivery-partner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515603593417:android:bf5297fc956f2a84a13518",
+        "android_client_info": {
+          "package_name": "com.delivea.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515603593417-8plad6ke0vut2ni6ljcu4c3cduvaheei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QAS58ueM6oXhNo4rStpAh55zENWAwxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515603593417-8plad6ke0vut2ni6ljcu4c3cduvaheei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515603593417:android:76954d7b926a40c1a13518",
+        "android_client_info": {
+          "package_name": "com.deliveamerchant.delivea_merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515603593417-8plad6ke0vut2ni6ljcu4c3cduvaheei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QAS58ueM6oXhNo4rStpAh55zENWAwxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515603593417-8plad6ke0vut2ni6ljcu4c3cduvaheei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515603593417:android:96ae7048cb1a3ee8a13518",
+        "android_client_info": {
+          "package_name": "com.strokx.Delevea_Delivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515603593417-8plad6ke0vut2ni6ljcu4c3cduvaheei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QAS58ueM6oXhNo4rStpAh55zENWAwxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515603593417-8plad6ke0vut2ni6ljcu4c3cduvaheei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

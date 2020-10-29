@@ -28,18 +28,12 @@ class ProductCategory with ChangeNotifier {
   List<CategoryModel> get items {
     return [..._items];
   }
-
+  ShopModel findShopById(int id) {
+    return _shopList.firstWhere((element) => element.id == id);
+  }
   List<ShopModel> get shopsList {
-    // if (_showFavoritesOnly) {
-    //   return _items.where((prodItem) => prodItem.isFavorite).toList();
-    // }
     return [..._shopList];
   }
-
-/*  List<Product> get favoriteItems {
-    return _items.where((prodItem) => prodItem.isFavorite).toList();
-  }
-*/
 
   Future<void> fetchCategories() async {
     var url = 'http://delevea.pythonanywhere.com/api/shop-category/all/';
@@ -58,7 +52,7 @@ class ProductCategory with ChangeNotifier {
         categories =
             (extractedData).map((e) => new CategoryModel.fromJson(e)).toList();
         _items = categories;
-        //  _items[0].isSelected = true;
+        _items[0].isSelected = true;
         print(extractedData);
         notifyListeners();
       }
@@ -132,9 +126,7 @@ class ProductCategory with ChangeNotifier {
           'Accept': 'application/json',
           'Authorization': 'Token $authToken',
         },
-        body: json.encode({
-          'zipcode': zipcode
-        }),
+        body: json.encode({'zipcode': zipcode}),
       );
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null || extractedData['zipcode'] == null) {
